@@ -87,4 +87,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  publicRuntimeConfig: {
+    WS_HOST: process.env.WS_HOST,
+  },
+
+  privateRuntimeConfig: {
+    WS_HOST: process.env.WS_HOST,
+  },
 };

@@ -10,6 +10,7 @@
         <li>本網站使用 Markdown 作為編輯語言。</li>
       </ol>
     </div>
+    SERVER: {{ host }}
   </div>
 </template>
 
@@ -18,5 +19,10 @@ import Vue from "vue";
 
 export default Vue.extend({
   name: "IndexPage",
+  data() {
+    return {
+      host: this.$config.WS_HOST,
+    };
+  },
 });
 </script>

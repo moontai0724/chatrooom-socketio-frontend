@@ -104,7 +104,7 @@ export default Vue.extend({
     };
   },
   mounted() {
-    this.manager = new Manager("ws://localhost", {
+    this.manager = new Manager("ws://" + this.$config.WS_HOST, {
       reconnectionDelayMax: 10000,
     });
     this.currentSocket = this.manager.socket("/");
