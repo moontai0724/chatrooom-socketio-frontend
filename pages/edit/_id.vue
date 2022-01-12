@@ -3,7 +3,7 @@
     <div class="codemirror">
       <codemirror
         ref="cmEditor"
-        v-model="code"
+        :value="code"
         :options="cmOptions"
         @input="onCmCodeChange"
       />
@@ -48,6 +48,7 @@ export default Vue.extend({
       id: this.$route.params.id,
       title: "",
       code: "",
+      anyKeyPressed: false,
       manager: {} as Manager,
       currentSocket: {} as Socket,
       cmOptions: {
@@ -97,11 +98,14 @@ export default Vue.extend({
   },
   methods: {
     onCmCodeChange(newCode) {
-      console.log("this is new code", newCode);
+      if (this.code === newCode) return;
+      this.code = newCode;
       this.currentSocket.emit("UpdateFile", {
         id: this.id,
         title: this.title,
         content: newCode,
+        lastUpdate: Date.now(),
+        updator: this.currentSocket.id,
       });
     },
   },
