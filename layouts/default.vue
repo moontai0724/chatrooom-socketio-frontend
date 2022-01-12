@@ -1,92 +1,134 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
-      <v-list>
+  <v-app>
+    <v-navigation-drawer v-model="drawer" clipped fixed app>
+      <v-list dense>
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
+          v-for="file in files"
+          :key="file.id"
+          :to="`/edit/${file.id}`"
           router
           exact
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title v-text="file.title" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar clipped-left fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light> mdi-repeat </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer :absolute="!fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+    <v-footer app>
+      <span>moontai0724 &copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <v-btn
+          color="green darken-2"
+          dark
+          fab
+          fixed
+          right
+          bottom
+          v-on="on"
+          @click="dialog = true"
+        >
+          <v-icon> mdi-plus </v-icon>
+        </v-btn>
+      </template>
+      <span>新增檔案</span>
+    </v-tooltip>
+    <v-dialog v-model="dialog" persistent max-width="600px">
+      <v-card :loading="submitting">
+        <v-form v-model="isFormValid" @submit.prevent="submitCreate">
+          <v-card-title>
+            <span class="text-h5">新增檔案</span>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="newFileName"
+              :rules="[(v) => !!v || '請填入檔案名稱']"
+              label="新檔案名稱"
+              persistent-hint
+              required
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              type="button"
+              color="red lighten-1"
+              text
+              @click="closeDialog"
+            >
+              取消
+            </v-btn>
+            <v-btn
+              type="submit"
+              color="green lighten-1"
+              text
+              :disabled="!isFormValid"
+            >
+              新增
+            </v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
-<script>
-export default {
-  name: 'DefaultLayout',
+<script lang="ts">
+import Vue from "vue";
+import { Manager, Socket } from "socket.io-client";
+export default Vue.extend({
+  name: "DefaultLayout",
   data() {
     return {
-      clipped: false,
       drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/',
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire',
-        },
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js',
-    }
+      files: [],
+      title: "簡易線上共筆",
+      dialog: false,
+      newFileName: null,
+      isFormValid: false,
+      submitting: false,
+      manager: {} as Manager,
+      currentSocket: {} as Socket,
+    };
   },
-}
+  mounted() {
+    this.manager = new Manager("ws://localhost", {
+      reconnectionDelayMax: 10000,
+    });
+    this.currentSocket = this.manager.socket("/");
+
+    this.currentSocket.emit("FetchAllFileTitles");
+    this.currentSocket.on(
+      "AllFileTitles",
+      (allFiles) => (this.files = allFiles),
+    );
+  },
+  methods: {
+    closeDialog() {
+      this.newFileName = null;
+      this.dialog = false;
+      this.submitting = false;
+    },
+    submitCreate() {
+      this.submitting = true;
+      this.currentSocket.emit("NewFile", { title: this.newFileName });
+      this.currentSocket.on("RequestedFile", (file) => {
+        this.$router.push("/edit/" + file.id);
+        this.closeDialog();
+      });
+    },
+  },
+});
 </script>
