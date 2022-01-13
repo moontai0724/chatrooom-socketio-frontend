@@ -16,8 +16,8 @@ jobs:
         run: |
           cp .env.example .env
           yarn
-          yarn build
-          yarn generate
+          yarn build:gh-pages
+          yarn generate:gh-pages
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2

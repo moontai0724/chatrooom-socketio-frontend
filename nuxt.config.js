@@ -1,4 +1,15 @@
 import colors from "vuetify/es5/util/colors";
+// import browserEnv from "browser-env";
+// browserEnv(["document", "window", "navigator"]);
+
+const routerBase =
+  process.env.DEPLOY_ENV === "GH_PAGES"
+    ? {
+        router: {
+          base: "/chatrooom-socketio-frontend/",
+        },
+      }
+    : {};
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
@@ -95,4 +106,6 @@ export default {
   privateRuntimeConfig: {
     WS_HOST: process.env.WS_HOST,
   },
+
+  ...routerBase,
 };
