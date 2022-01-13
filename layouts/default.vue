@@ -104,9 +104,14 @@ export default Vue.extend({
     };
   },
   mounted() {
-    this.manager = new Manager("ws://" + this.$config.WS_HOST, {
-      reconnectionDelayMax: 10000,
-    });
+    this.manager = new Manager(
+      (location.protocol === "https:" ? "wss" : "ws") +
+        "://" +
+        this.$config.WS_HOST,
+      {
+        reconnectionDelayMax: 10000,
+      },
+    );
     this.currentSocket = this.manager.socket("/");
 
     this.currentSocket.emit("FetchAllFileTitles");

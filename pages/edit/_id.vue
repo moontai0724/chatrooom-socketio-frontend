@@ -74,13 +74,18 @@ export default Vue.extend({
     };
   },
   mounted() {
-    this.manager = new Manager("ws://" + this.$config.WS_HOST, {
-      reconnectionDelayMax: 10000,
-      query: {
-        documentName: "網路程式設計",
-        userName: "moontai0724",
+    this.manager = new Manager(
+      (location.protocol === "https:" ? "wss" : "ws") +
+        "://" +
+        this.$config.WS_HOST,
+      {
+        reconnectionDelayMax: 10000,
+        query: {
+          documentName: "網路程式設計",
+          userName: "moontai0724",
+        },
       },
-    });
+    );
     this.currentSocket = this.manager.socket("/");
     this.currentSocket.emit("OpenFile", { id: this.id });
     this.currentSocket.on("RequestedFile", (file) => {

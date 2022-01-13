@@ -10,7 +10,7 @@
         <li>本網站使用 Markdown 作為編輯語言。</li>
       </ol>
     </div>
-    SERVER: {{ host }}
+    SERVER: {{ protocol === "https:" ? "wss://" : "ws://" }}{{ host }}
   </div>
 </template>
 
@@ -22,7 +22,11 @@ export default Vue.extend({
   data() {
     return {
       host: this.$config.WS_HOST,
+      protocol: "",
     };
+  },
+  mounted() {
+    this.protocol = location.protocol;
   },
 });
 </script>
