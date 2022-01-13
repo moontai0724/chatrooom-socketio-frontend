@@ -1,0 +1,10 @@
+{
+  "name": "chatroom-frontend",
+  "short_name": "chatroom-frontend",
+  "description": "A class final using `socket.io`.",
+  "icons": [],
+  "start_url": "/?standalone=true",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "lang": "zh-Hant-TW"
+}
