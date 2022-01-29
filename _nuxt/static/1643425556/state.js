@@ -1,0 +1,1 @@
+window.__NUXT__=(function(a){return {staticAssetsBase:"\u002Fonline-editor-frontend\u002F_nuxt\u002Fstatic\u002F1643425556",layout:"default",error:a,serverRendered:true,routePath:"\u002F",config:{WS_HOST:"moontai0724-online-editor.herokuapp.com",_app:{basePath:"\u002Fonline-editor-frontend\u002F",assetsPath:"\u002Fonline-editor-frontend\u002F_nuxt\u002F",cdnURL:a}}}}(null));
