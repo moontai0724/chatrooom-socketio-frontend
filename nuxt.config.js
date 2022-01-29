@@ -6,7 +6,7 @@ const routerBase =
   process.env.DEPLOY_ENV === "GH_PAGES"
     ? {
         router: {
-          base: "/chatrooom-socketio-frontend/",
+          base: "/online-editor-frontend/",
         },
       }
     : {};
@@ -17,8 +17,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s - chatroom-frontend",
-    title: "chatroom-frontend",
+    titleTemplate: "%s - online-editor",
+    title: "online-editor",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
